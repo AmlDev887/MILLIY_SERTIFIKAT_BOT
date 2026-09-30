@@ -1,14 +1,12 @@
-from app.models import Users
-import asyncio
+from app.models import User
 from aiogram import Router,types
 from aiogram.filters import CommandStart
-from app.config import BOT_TOKEN
 from app.database import SessionLocal
 from sqlalchemy import select
-from app.models import User
+from bot.keyboards.keybord_start import *
 router = Router()
 
-WELCOME_TXT = """👋 <b>[Bot nomi]</b> botiga xush kelibsiz!
+WELCOME_TXT = """👋 <b>MILLIY SERTIFIKAT TEST</b> botiga xush kelibsiz!
 
 Bu yerda siz <b>Milliy Sertifikat</b> imtihoniga tayyorlanasiz: haqiqiy imtihon formatidagi testlarni yechasiz va natijangizni ko'rasiz.
 
@@ -29,21 +27,26 @@ Bu yerda siz <b>Milliy Sertifikat</b> imtihoniga tayyorlanasiz: haqiqiy imtihon 
 3. To'lov qiling va chekni yuboring
 4. Tekshiruvdan so'ng kirish huquqini oling
 
-Savollar uchun: [@qo'llab-quvvatlash]"""
+Savollar uchun: @xolmurodov_amalbek"""
 
 @router.message(CommandStart())
 async def cmd_start(message: types.Message):
     await message.answer(WELCOME_TXT, parse_mode = 'HTML')
+    await message.answer("Xizmatni tanlang:", reply_markup=keyboard_start)
+    
     telegram_id = message.from_user.id
-    user = await SessionLocal.scalar(
-        select(User).where(User.telegram_id == telegram_id)
-    )
-    if not user:
-        user = User(
-            telegram_id = telegram_id,
-            username = message.from_user.username,
-            first_name = message.from_user.first_name
+    async with SessionLocal() as session:
+        user = await session.scalar(
+            select(User).where(User.telegram_id == telegram_id)    
         )
-    SessionLocal.add(user)
-    await SessionLocal.commit()
+        
+        if not user:
+            user = User(
+                telegram_id = telegram_id,
+                username = message.from_user.username,
+                first_name = message.from_user.first_name
+            )
+            session.add(user)
+            await session.commit()
+
 
