@@ -1,5 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from bot.handlers.subjects import buttons
+
 keyboard_start = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="📚 Fanlar"), KeyboardButton(text="📝 Yangi test")],
@@ -8,11 +8,4 @@ keyboard_start = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True,
     input_field_placeholder="Bo'limni tanlang 👇",
-)
-
-fan_keyboard = ReplyKeyboardMarkup(
-    keyboard = [
-        [KeyboardButton(text = button)]
-        for button in buttons
-    ]
 )
